@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloud Shop</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(to right, #f8f9fa, #e9ecef);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    h1 {
+      margin-top: 30px;
+      margin-bottom: 40px;
+      font-weight: 700;
+      color: #343a40;
+    }
+    .card {
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      border: none;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+    .product-img-wrapper {
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 280px;
+      padding: 20px;
+    }
+    .product-img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+      border-radius: 15px;
+    }
+    .card:hover .product-img {
+      transform: scale(1.05);
+    }
+    .price-badge {
+      background: linear-gradient(90deg, #28a745, #218838);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-top: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    footer {
+      margin-top: auto;
+      background: #343a40;
+      color: #fff;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1 class="text-center">List Products</h1>
+    <div class="row" id="product-list">
+      <!-- Produk akan dimasukkan disini -->
+    </div>
+  </div>
+
+  <footer>
+    ~~~
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    async function fetchProducts() {
+      try {
+        const response = await fetch('/products');
+        const products = await response.json();
+        const productList = document.getElementById('product-list');
+        productList.innerHTML = '';
+
+        // Ini array gambar produk
+        const imageUrls = [
+          'https://ecommerce-product-images-arsya.s3.ap-southeast-2.amazonaws.com/curry11.jpg',
+          'https://ecommerce-product-images-arsya.s3.ap-southeast-2.amazonaws.com/curry6.jpg',
+          'https://ecommerce-product-images-arsya.s3.ap-southeast-2.amazonaws.com/LeBron14.jpg'
+        ];
+
+        products.forEach((product, index) => {
+          const imgUrl = imageUrls[index % imageUrls.length];
+          const col = document.createElement('div');
+          col.className = 'col-md-4 mb-4 d-flex align-items-stretch';
+
+          col.innerHTML = `
+            <div class="card w-100">
+              <div class="product-img-wrapper">
+                <img src="${imgUrl}" class="product-img" alt="Produk">
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title">${product.product_name || 'Nama Produk'}</h5>
+		<div class="price-badge">Rp ${Number(product.product_price).toLocaleString('id-ID')}</div>
+              </div>
+            </div>
+          `;
+
+          productList.appendChild(col);
+        });
+      } catch (error) {
+        console.error('Gagal mengambil produk:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchProducts);
+  </script>
+
+</body>
+</html>
